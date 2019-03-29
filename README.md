@@ -2,9 +2,17 @@
 
 Project repo for course: Distributed Computing Systems
 
-- [Requirement](#Project - Distributed Computing System - Spring 2019)
+- [Distributed Computing Systems_Project](#distributed-computing-systemsproject)
+  - [Project Distributed Computing System Spring 2019](#project-distributed-computing-system-spring-2019)
+    - [Overview](#overview)
+    - [Implementation Requirements](#implementation-requirements)
+    - [Grouping](#grouping)
+    - [Presentation](#presentation)
+    - [Grading](#grading)
+    - [Submission](#submission)
+    - [Tentative Timeline](#tentative-timeline)
 
-## Project - Distributed Computing System - Spring 2019
+## Project Distributed Computing System Spring 2019
 
 > Prepared by Dr. Seon-Phil JEONG & Mr. Bill Junru ZHONG\
 > Last modifled on March 29,2019
