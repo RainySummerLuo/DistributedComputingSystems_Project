@@ -2,14 +2,14 @@
 
 Project repo for course: Distributed Computing Systems
 
-[TOC]
+- [Requirement](## Project - Distributed Computing System - Spring 2019)
 
 ## Project - Distributed Computing System - Spring 2019
 
 > Prepared by Dr. Seon-Phil JEONG & Mr. Bill Junru ZHONG\
 > Last modifled on March 29,2019
 
-## Overview
+### Overview
 
 In this project, you are going to develop a **chatting software** using some distributed computing mechanisms in **Java** and / or **Python**.
 
@@ -30,7 +30,7 @@ You will be grouped in 4 people, then develop the application, and finally organ
 
 Please continue to read the detailed requirements.
 
-## Implementation Requirements
+### Implementation Requirements
 
 You **must** use at least one of the distributed computing technologies, including the techologies we taught or not taught during the classes. Such as Java RMI, CORBA, IIOP we introduced during the classes. Or modern RPC framework like GRPC and Dubbo
 
@@ -42,11 +42,11 @@ You can oly use **Java** and / or **Python** as your programming language. No ot
 
 You can try your best to make better designs in software inerfaces and structures. Then show them during your presentations.
 
-## Grouping
+### Grouping
 
 We follow the semi-random grouping mechanism. Each of the four-people groups will be formed by two pairs and the pairs will be chosen by yourselves. A draw will be held to form pairs into groups.
 
-## Presentation
+### Presentation
 
 Each of your presentations will be 20 minutes in length including demo and Q&A sections.
 
@@ -58,19 +58,19 @@ All of your member should speak during the whole presentation.
 
 All of you should attend all of the presentations.
 
-## Grading
+### Grading
 
 The grading will follow the rubic. A satisfactory grade will be given once you get the basic features done. You will get the higher grade if you get more functions doen and / or a better structure design.
 
 Initially the grades of members in same groups will be the same. A survey will be done after your presentations which allows you to indicate who contributes significantly more. A weight will be added on these well-performed students (how much on it will be decided later).
 
-## Submission
+### Submission
 
 Your presentation slides and your code should be submitted to iSpace. The due day will be set on iSpace.
 
 No late submission is allowed.
 
-## Tentative Timeline
+### Tentative Timeline
 
 |  Week   |     Date     |                    Work                     |
 | :-----: | :----------: | :-----------------------------------------: |
