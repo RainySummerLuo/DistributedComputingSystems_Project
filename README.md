@@ -2,7 +2,7 @@
 
 Project repo for course: Distributed Computing Systems
 
-- [Requirement](## Project - Distributed Computing System - Spring 2019)
+- [Requirement](#Project - Distributed Computing System - Spring 2019)
 
 ## Project - Distributed Computing System - Spring 2019
 
