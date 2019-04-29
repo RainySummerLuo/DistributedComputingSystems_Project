@@ -19,12 +19,14 @@ Project repo for course: Distributed Computing Systems
 
 ### Overview
 
-In this project, you are going to develop a **chatting software** using some distributed computing mechanisms in **Java** and / or **Python**.
+In this project, you are going to develop a **chatting software** using some distributed computing mechanisms in ~~**Java** and / or~~ **Python**.
 
 Your software should at least implement the following features,
 
 - A user interface
-- User identification
+- User identification:
+  - By IP
+  - Sever has a Database
 - Sending and receiving text messages
 - Working in a local area network
 
@@ -34,7 +36,7 @@ There is no limitation for other functions or improvement. You can design and ad
 - A pretty graphical interface
 - Running program code remortely
 
-You will be grouped in 4 people, then develop the application, and finally organize a persentation on your work.
+You will be grouped in 4 people, then develop the application, and finally organize a presentation on your work.
 
 Please continue to read the detailed requirements.
 
@@ -46,7 +48,7 @@ HTTP and WebSocket is also allowed, but direct use of any existing software like
 
 Direct socket programming is not allowed.
 
-You can oly use **Java** and / or **Python** as your programming language. No other language is allowed.
+You can oly use ~~**Java** and / or~~ **Python** as your programming language. No other language is allowed.
 
 You can try your best to make better designs in software inerfaces and structures. Then show them during your presentations.
 
