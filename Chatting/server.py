@@ -9,14 +9,11 @@ class RequestHandler(SimpleXMLRPCRequestHandler):
 
 # Create server
 with SimpleXMLRPCServer(('localhost', 8000), requestHandler=RequestHandler) as server:
-    server.register_introspection_functions()
-
-
     class MyFuncs:
         def say(self, sth):
             print("TA说: ", sth)
-            ret = input("我说: ")
-            return ret
+            reply = input("我说: ")
+            return reply
 
     server.register_instance(MyFuncs())
     # Run the server's main loop
