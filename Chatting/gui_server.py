@@ -47,7 +47,6 @@ class Ui_MainWindow(object):
     def send_button_click(self):
         QtWidgets.QMessageBox.information(self.pushButton, "HI", "Testing, testing...")
 
-
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)

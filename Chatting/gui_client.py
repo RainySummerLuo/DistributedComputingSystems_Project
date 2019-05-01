@@ -6,7 +6,11 @@
 #
 # WARNING! All changes made in this file will be lost!
 
+import xmlrpc.client
+
 from PyQt5 import QtCore, QtGui, QtWidgets
+
+s = xmlrpc.client.ServerProxy('http://localhost:8000')
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -45,7 +49,10 @@ class Ui_MainWindow(object):
         self.pushButton.setText(_translate("MainWindow", "Send"))
 
     def send_button_click(self):
-        QtWidgets.QMessageBox.information(self.pushButton, "HI", "Testing, testing...")
+        sth = self.lineEdit.text()
+        self.textEdit.append("我说: " + sth)
+        reply = s.say(sth)
+        self.textEdit.append("她说: " + reply)
 
 
 if __name__ == "__main__":
@@ -55,5 +62,3 @@ if __name__ == "__main__":
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
     MainWindow.show()
-    sys.exit(app.exec_())
-
