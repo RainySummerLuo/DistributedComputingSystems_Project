@@ -9,7 +9,7 @@ Project repo for course: Distributed Computing Systems
 
 ![Current Version Screenshot](./Screenshot.png)
 
-### Issues / Ideas
+### Issues / Ideas (2019/5/2)
 
 - [ ] **Messages are sent one by one, next message can be sent only after respond.**
 - [ ] **How to implement functions in PyQt (for server)?**
