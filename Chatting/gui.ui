@@ -23,17 +23,29 @@
       <x>10</x>
       <y>380</y>
       <width>461</width>
-      <height>31</height>
+      <height>35</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QLineEdit" name="lineEdit"/>
+        <widget class="QLineEdit" name="lineEdit">
+         <property name="font">
+          <font>
+           <family>华文细黑</family>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QPushButton" name="pushButton">
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+          </font>
+         </property>
          <property name="text">
           <string>Send</string>
          </property>
@@ -51,6 +63,15 @@
       <width>461</width>
       <height>361</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>华文细黑</family>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="contextMenuPolicy">
+     <enum>Qt::NoContextMenu</enum>
     </property>
    </widget>
   </widget>
@@ -70,6 +91,22 @@
     <hint type="destinationlabel">
      <x>407</x>
      <y>416</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lineEdit</sender>
+   <signal>returnPressed()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>send_button_click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>200</x>
+     <y>394</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>6</x>
+     <y>402</y>
     </hint>
    </hints>
   </connection>

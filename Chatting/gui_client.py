@@ -28,19 +28,37 @@ class Ui_MainWindow(object):
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.lineEdit = QtWidgets.QLineEdit(self.verticalLayoutWidget)
+        font = QtGui.QFont()
+        font.setFamily("华文细黑")
+        font.setPointSize(11)
+        self.lineEdit.setFont(font)
         self.lineEdit.setObjectName("lineEdit")
         self.horizontalLayout.addWidget(self.lineEdit)
         self.pushButton = QtWidgets.QPushButton(self.verticalLayoutWidget)
+        font = QtGui.QFont()
+        font.setPointSize(11)
+        self.pushButton.setFont(font)
         self.pushButton.setObjectName("pushButton")
         self.horizontalLayout.addWidget(self.pushButton)
         self.verticalLayout.addLayout(self.horizontalLayout)
         self.textEdit = QtWidgets.QTextEdit(self.centralwidget)
         self.textEdit.setGeometry(QtCore.QRect(10, 10, 461, 361))
+        font = QtGui.QFont()
+        font.setFamily("华文细黑")
+        font.setPointSize(11)
+        self.textEdit.setFont(font)
+        self.textEdit.setReadOnly(True)
         self.textEdit.setObjectName("textEdit")
         MainWindow.setCentralWidget(self.centralwidget)
 
+        # MainWindow.setWindowFlags(QtCore.Qt.WindowMinimizeButtonHint)
+        MainWindow.setWindowFlags(QtCore.Qt.WindowCloseButtonHint)
+        MainWindow.setFixedSize(MainWindow.width(), MainWindow.height())
+
         self.retranslateUi(MainWindow)
         self.pushButton.clicked.connect(self.send_button_click)
+        self.lineEdit.setFocus()
+        self.lineEdit.returnPressed.connect(self.send_button_click)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -50,9 +68,11 @@ class Ui_MainWindow(object):
 
     def send_button_click(self):
         sth = self.lineEdit.text()
+        self.lineEdit.clear()
         self.textEdit.append("我说: " + sth)
         reply = s.say(sth)
         self.textEdit.append("她说: " + reply)
+        self.lineEdit.setFocus()
 
 
 if __name__ == "__main__":
