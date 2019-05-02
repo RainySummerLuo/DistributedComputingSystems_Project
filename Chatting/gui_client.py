@@ -7,6 +7,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 s = xmlrpc.client.ServerProxy('http://localhost:8000')
 
+
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
