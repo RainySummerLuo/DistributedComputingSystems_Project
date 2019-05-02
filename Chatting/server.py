@@ -13,7 +13,8 @@ class RequestHandler(SimpleXMLRPCRequestHandler):
 # Create server
 with SimpleXMLRPCServer(('localhost', 8000), requestHandler=RequestHandler) as server:
     class MyFuncs:
-        def say(self, sth):
+        @staticmethod
+        def say(sth):
             print("TA说: ", sth)
             reply = input("我说: ")
             return reply
