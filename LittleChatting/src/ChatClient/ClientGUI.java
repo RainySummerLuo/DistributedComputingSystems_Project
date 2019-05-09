@@ -27,7 +27,6 @@ import javax.swing.border.Border;
 
 
 public class ClientGUI extends JFrame implements ActionListener {
-
     private static final long serialVersionUID = 1L;
     private JTextField textField;
     private String name, message;
@@ -194,7 +193,6 @@ public class ClientGUI extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
         try {
             //get connected to chat service
             if (e.getSource() == startButton) {
