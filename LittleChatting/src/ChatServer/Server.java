@@ -10,9 +10,10 @@ import java.rmi.server.RemoteRef;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Date;
 import java.util.Vector;
-// import java.util.Vector;
-
-// import ChatClient.ClientInterface;
+/*
+ import java.util.Vector;
+ import ChatClient.ClientInterface;
+*/
 
 
 public class Server extends UnicastRemoteObject implements ServerInterface {
