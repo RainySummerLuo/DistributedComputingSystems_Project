@@ -8,7 +8,7 @@ import java.rmi.server.RemoteRef;
 public interface ServerInterface extends Remote {
     void updateChat(String userName, String chatMessage) throws RemoteException;
 
-    void passIdentity(RemoteRef ref) throws RemoteException;
+    void passIdentity(RemoteRef ref) throws Exception;
 
     void registerListener(String[] details) throws RemoteException;
 

@@ -21,7 +21,7 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
     private static final long serialVersionUID = 1L;
 
 
-    public Server() throws RemoteException {
+    private Server() throws RemoteException {
         super();
         chatters = new Vector<>(10, 1);
     }
@@ -57,20 +57,23 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
     }
 
 
+    /*
     public String sayHello(String ClientName) throws RemoteException {
         System.out.println(ClientName + " sent a message");
         return "Hello " + ClientName + " from group chat server";
     }
+    */
 
 
-    public void updateChat(String name, String nextPost) throws RemoteException {
+    @Override
+    public void updateChat(String name, String nextPost) {
         String message = name + " : " + nextPost + "\n";
         sendToAll(message);
     }
 
 
     @Override
-    public void passIdentity(RemoteRef ref) throws RemoteException {
+    public void passIdentity(RemoteRef ref) {
         //System.out.println("\n" + ref.remoteToString() + "\n");
         try {
             System.out.println(line + ref.toString());
@@ -81,7 +84,7 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 
 
     @Override
-    public void registerListener(String[] details) throws RemoteException {
+    public void registerListener(String[] details) {
         System.out.println(new Date(System.currentTimeMillis()));
         System.out.println(details[0] + " has joined the chat session");
         System.out.println(details[0] + "'s hostname : " + details[1]);
@@ -129,7 +132,7 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
     }
 
 
-    public void sendToAll(String newMessage) {
+    private void sendToAll(String newMessage) {
         for (Chat c : chatters) {
             try {
                 c.getClient().messageFromServer(newMessage);
@@ -141,8 +144,7 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 
 
     @Override
-    public void leaveChat(String userName) throws RemoteException {
-
+    public void leaveChat(String userName) {
         for (Chat c : chatters) {
             if (c.getName().equals(userName)) {
                 System.out.println(line + userName + " left the chat session");

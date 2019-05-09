@@ -29,22 +29,22 @@ import javax.swing.border.Border;
 public class ClientGUI extends JFrame implements ActionListener {
 
     private static final long serialVersionUID = 1L;
-    private JPanel textPanel, inputPanel;
     private JTextField textField;
     private String name, message;
     private Font meiryoFont = new Font("Meiryo", Font.PLAIN, 14);
     private Border blankBorder = BorderFactory.createEmptyBorder(10, 10, 20, 10);//top,r,b,l
     private Client chatClient;
     private JList<String> list;
-    private DefaultListModel<String> listModel;
 
-    JTextArea textArea, userArea;
+    JTextArea textArea; // , userArea;
     JFrame frame;
-    JButton privateMsgButton, startButton, sendButton;
+    JButton privateMsgButton;
+    private JButton startButton;
+    private JButton sendButton;
     JPanel clientPanel, userPanel;
 
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         //set the look and feel to 'Nimbus'
         try {
             for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
@@ -109,7 +109,7 @@ public class ClientGUI extends JFrame implements ActionListener {
         textArea.setWrapStyleWord(true);
         textArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(textArea);
-        textPanel = new JPanel();
+        JPanel textPanel = new JPanel();
         textPanel.add(scrollPane);
 
         textPanel.setFont(new Font("Meiryo", Font.PLAIN, 14));
@@ -118,7 +118,7 @@ public class ClientGUI extends JFrame implements ActionListener {
 
 
     private JPanel getInputPanel() {
-        inputPanel = new JPanel(new GridLayout(1, 1, 5, 5));
+        JPanel inputPanel = new JPanel(new GridLayout(1, 1, 5, 5));
         inputPanel.setBorder(blankBorder);
         textField = new JTextField();
         textField.setFont(meiryoFont);
@@ -149,7 +149,7 @@ public class ClientGUI extends JFrame implements ActionListener {
 
     void setClientPanel(String[] currClients) {
         clientPanel = new JPanel(new BorderLayout());
-        listModel = new DefaultListModel<String>();
+        DefaultListModel<String> listModel = new DefaultListModel<>();
 
         for (String s : currClients) {
             listModel.addElement(s);
@@ -159,7 +159,7 @@ public class ClientGUI extends JFrame implements ActionListener {
         }
 
         //Create the list and put it in a scroll pane.
-        list = new JList<String>(listModel);
+        list = new JList<>(listModel);
         list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         list.setVisibleRowCount(8);
         list.setFont(meiryoFont);
@@ -225,8 +225,8 @@ public class ClientGUI extends JFrame implements ActionListener {
             if (e.getSource() == privateMsgButton) {
                 int[] privateList = list.getSelectedIndices();
 
-                for (int i = 0; i < privateList.length; i++) {
-                    System.out.println("selected index :" + privateList[i]);
+                for (int value : privateList) {
+                    System.out.println("selected index :" + value);
                 }
                 message = textField.getText();
                 textField.setText("");
@@ -253,13 +253,14 @@ public class ClientGUI extends JFrame implements ActionListener {
 
     private void getConnected(String userName) throws RemoteException {
         //remove whitespace and non word characters to avoid malformed url
-        String cleanedUserName = userName.replaceAll("\\s+", "_");
+        String cleanedUserName;
         cleanedUserName = userName.replaceAll("\\W+", "_");
         try {
             chatClient = new Client(this, cleanedUserName);
             chatClient.startClient();
         } catch (RemoteException e) {
             e.printStackTrace();
+            throw e;
         }
     }
 }

@@ -2,26 +2,26 @@ package ChatServer;
 
 import ChatClient.ClientInterface;
 
-public class Chat {
+class Chat {
+    private String name;
+    private ClientInterface client;
 
-    public String name;
-    public ClientInterface client;
 
     //constructor
-    public Chat(String name, ClientInterface client){
+    Chat(String name, ClientInterface client){
         this.name = name;
         this.client = client;
     }
 
 
     //getters and setters
-    public String getName(){
+    String getName(){
         return name;
     }
-    public ClientInterface getClient(){
+
+
+    ClientInterface getClient(){
         return client;
     }
-
-
 }
 

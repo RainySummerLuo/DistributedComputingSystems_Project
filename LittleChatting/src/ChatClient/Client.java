@@ -14,16 +14,14 @@ import ChatServer.ServerInterface;
 
 public class Client extends UnicastRemoteObject implements ClientInterface {
     private static final long serialVersionUID = 7468891722773409712L;
-    ClientGUI chatGUI;
-    private String hostName = "localhost";
-    private String serviceName = "GroupChatService";
+    private ClientGUI chatGUI;
     private String clientServiceName;
     private String name;
     ServerInterface serverIF;
     boolean connectionProblem = false;
 
 
-    public Client(ClientGUI aChatGUI, String userName) throws RemoteException {
+    Client(ClientGUI aChatGUI, String userName) throws RemoteException {
         super();
         this.chatGUI = aChatGUI;
         this.name = userName;
@@ -31,11 +29,13 @@ public class Client extends UnicastRemoteObject implements ClientInterface {
     }
 
 
-    public void startClient() throws RemoteException {
+    void startClient() throws RemoteException {
+        String hostName = "localhost";
         String[] details = {name, hostName, clientServiceName};
 
         try {
             Naming.rebind("rmi://" + hostName + "/" + clientServiceName, this);
+            String serviceName = "GroupChatService";
             serverIF = (ServerInterface) Naming.lookup("rmi://" + hostName + "/" + serviceName);
         } catch (ConnectException e) {
             JOptionPane.showMessageDialog(
@@ -65,7 +65,7 @@ public class Client extends UnicastRemoteObject implements ClientInterface {
 
 
     @Override
-    public void messageFromServer(String message) throws RemoteException {
+    public void messageFromServer(String message) {
         System.out.println(message);
         chatGUI.textArea.append(message);
         //make the gui display the last appended text, ie scroll to bottom
@@ -74,8 +74,7 @@ public class Client extends UnicastRemoteObject implements ClientInterface {
 
 
     @Override
-    public void updateUserList(String[] currentUsers) throws RemoteException {
-
+    public void updateUserList(String[] currentUsers) {
         if (currentUsers.length < 2) {
             chatGUI.privateMsgButton.setEnabled(false);
         }
