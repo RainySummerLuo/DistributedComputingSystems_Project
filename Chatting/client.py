@@ -14,8 +14,3 @@ if __name__ == '__main__':
     ui.setupUi(mainwindow)
     mainwindow.show()
     sys.exit(app.exec_())
-
-# while 1:
-#     sth = input("我说: ")
-#     reply = s.say(sth)
-#     print("TA说: ", reply)

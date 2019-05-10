@@ -3,7 +3,7 @@
 
 from xmlrpc.server import SimpleXMLRPCServer
 from xmlrpc.server import SimpleXMLRPCRequestHandler
-# Restrict to a particular path.
+
 
 
 class RequestHandler(SimpleXMLRPCRequestHandler):
@@ -16,8 +16,6 @@ with SimpleXMLRPCServer(('localhost', 8000), requestHandler=RequestHandler) as s
         @staticmethod
         def say(sth):
             print("TA说: ", sth)
-            reply = input("我说: ")
-            return reply
 
     server.register_instance(MyFuncs())
     # Run the server's main loop

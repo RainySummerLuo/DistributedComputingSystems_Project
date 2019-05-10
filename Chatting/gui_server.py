@@ -68,9 +68,6 @@ class Ui_MainWindow(object):
         self.textEdit.append("我说: " + sth)
         s.say(sth)
 
-    def say(self, sth):
-        print("TA说: ", sth)
-
 
 if __name__ == "__main__":
     import sys
