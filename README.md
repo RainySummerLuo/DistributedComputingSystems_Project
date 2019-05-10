@@ -11,14 +11,14 @@ Project repo for course: Distributed Computing Systems
 
 ### Issues / Ideas (2019/5/2)
 
-- [ ] **Messages are sent one by one, next message can be sent only after respond.**
-- [ ] **How to implement functions in PyQt (for server)?**
+- [x] **Messages are sent one by one, next message can be sent only after respond.**
+- [x] **How to implement functions in PyQt (for server)?**
 - [ ] Sent multi-media files
 - [ ] Remotely execute codes/functions/exes
+- [ ] GUI Design (像QQ一样的聊天界面（好友头像、聊天框） / 好友列表？)
 - [ ] Icon for the GUI
 - [ ] Password? ID authentication?
-- [ ] 像QQ一样的聊天界面（好友头像、聊天框） / 好友列表？
-
+- [ ] Emoji 表情
 ## XML-RPC
 
 **XML-RPC** is a Remote Procedure Call method that uses XML passed via HTTP as a transport. With it, a client can call methods with parameters on a remote server (the server is named by a URI) and get back structured data.
