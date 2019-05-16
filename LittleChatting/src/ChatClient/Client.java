@@ -70,15 +70,16 @@ public class Client extends UnicastRemoteObject implements ClientInterface {
 
     @Override
     public void getMsg(String message) {
-        chatGUI.textArea.append(message);
+        chatGUI.textPane.setText(chatGUI.textPane.getText() + "\n" + message);
         //make the gui display the last appended text, ie scroll to bottom
-        chatGUI.textArea.setCaretPosition(chatGUI.textArea.getDocument().getLength());
+        chatGUI.textPane.setCaretPosition(chatGUI.textPane.getDocument().getLength());
     }
 
 
     @Override
     public void getFile(String clientName, byte[] fileBytes, String fileName) {
-        chatGUI.textArea.append(clientName + ": " + "I have sent you a file.");
+        chatGUI.textPane.setText(chatGUI.textPane.getText() + "\n" + clientName + ": " + "I have sent you a file.\n");
+        //chatGUI.textPane.append("<html><A href='" + byteTofile(fileBytes, fileName) + "'>" + fileName + "</A></html>");
         try {
             Desktop.getDesktop().open(new File(Objects.requireNonNull(byteTofile(fileBytes, fileName))));
         } catch (IOException e) {

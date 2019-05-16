@@ -13,15 +13,14 @@ import java.rmi.RemoteException;
 public class ClientGUI extends JFrame implements ActionListener {
     private static final long serialVersionUID = 1L;
     private JTextField textField;
-    private String name = "", message;
+    private String name = "";//, message;
     private Font segeoFont = new Font("Segeo UI", Font.PLAIN, 14);
     private Border blankBorder = BorderFactory.createEmptyBorder(10, 10, 20, 10);//top,r,b,l
     private Client chatClient;
-    private JList<String> list;
 
-    JTextArea textArea; // , userArea;
+    JTextPane textPane; // , userArea;
     JFrame frame;
-    JButton privateMsgButton;
+    //JButton privateMsgButton;
     private JButton fileBtn;
     private JButton msgBtn;
     JPanel clientPanel, userPanel;
@@ -89,8 +88,8 @@ public class ClientGUI extends JFrame implements ActionListener {
         frame.setTitle(name + "'s console ");
         frame.setTitle("LittleChatting - " + name);
         textField.setText("");
-        textArea.append("username : " + name + " connecting to chat...\n");
-        // textArea.append("username : " + name + " connecting to chat...\n");
+        textPane.setText(textPane.getText() + "\n" + "username : " + name + " connecting to chat...\n");
+        // textPane.append("username : " + name + " connecting to chat...\n");
         try {
             getConnected(name);
         } catch (RemoteException e) {
@@ -102,14 +101,14 @@ public class ClientGUI extends JFrame implements ActionListener {
 
     private JPanel getTextPanel() {
         String welcome = "Welcome enter your name and press Start to begin\n";
-        textArea = new JTextArea(welcome, 14, 34);
-        textArea.setMargin(new Insets(10, 10, 10, 10));
-        textArea.setFont(segeoFont);
-
-        textArea.setLineWrap(true);
-        textArea.setWrapStyleWord(true);
-        textArea.setEditable(false);
-        JScrollPane scrollPane = new JScrollPane(textArea);
+        textPane = new JTextPane();
+        textPane.setText(welcome);
+        textPane.setMargin(new Insets(10, 10, 10, 10));
+        textPane.setFont(segeoFont);
+        //textPane.setLineWrap(true);
+        //textPane.setWrapStyleWord(true);
+        textPane.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(textPane);
         JPanel textPanel = new JPanel();
         textPanel.add(scrollPane);
 
@@ -130,13 +129,8 @@ public class ClientGUI extends JFrame implements ActionListener {
 
     private JPanel getUsersPanel() {
         userPanel = new JPanel(new BorderLayout());
-        String userStr = " Current Users      ";
 
-        JLabel userLabel = new JLabel(userStr, JLabel.CENTER);
-        userPanel.add(userLabel, BorderLayout.NORTH);
-        userLabel.setFont(new Font("Meiryo", Font.PLAIN, 16));
-
-        String[] noClientsYet = {"No other users"};
+        String[] noClientsYet = {"Broadcast"};
         setClientPanel(noClientsYet);
 
         clientPanel.setFont(segeoFont);
@@ -159,7 +153,7 @@ public class ClientGUI extends JFrame implements ActionListener {
         }*/
 
         //Create the list and put it in a scroll pane.
-        list = new JList<>(listModel);
+        JList<String> list = new JList<>(listModel);
         list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         list.setVisibleRowCount(8);
         list.setFont(segeoFont);
@@ -193,7 +187,7 @@ public class ClientGUI extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         try {
             if (e.getSource() == msgBtn) {
-                message = textField.getText();
+                String message = textField.getText();
                 textField.setText("");
                 sendMsg(message);
                 System.out.println("Send Msg: " + message);
@@ -207,7 +201,7 @@ public class ClientGUI extends JFrame implements ActionListener {
                 sendFile(fileTobyte(file.getAbsolutePath()), file.getName());
             }
 
-            if (e.getSource() == privateMsgButton) {
+            /*if (e.getSource() == privateMsgButton) {
                 int[] privateList = list.getSelectedIndices();
 
                 for (int value : privateList) {
@@ -216,7 +210,7 @@ public class ClientGUI extends JFrame implements ActionListener {
                 message = textField.getText();
                 textField.setText("");
                 sendPrivate(privateList);
-            }
+            }*/
         } catch (RemoteException remoteExc) {
             remoteExc.printStackTrace();
         }
@@ -258,12 +252,12 @@ public class ClientGUI extends JFrame implements ActionListener {
         chatClient.serverIF.fileToAll(name, fileBytes, fileName);
     }
 
-
+    /*
     private void sendPrivate(int[] privateList) throws RemoteException {
         String privateMessage = "[PM from " + name + "] :" + message + "\n";
         chatClient.serverIF.msgToOne(privateList, privateMessage);
     }
-
+    */
 
     private void getConnected(String userName) throws RemoteException {
         //remove whitespace and non word characters to avoid malformed url
