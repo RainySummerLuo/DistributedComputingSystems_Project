@@ -6,6 +6,8 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.*;
 import java.rmi.RemoteException;
 
@@ -69,7 +71,7 @@ public class ClientGUI extends JFrame implements ActionListener {
         panel.add(getInputPanel(), BorderLayout.CENTER);
         panel.add(getTextPanel(), BorderLayout.NORTH);
 
-        container.setLayout(new BorderLayout());
+        container.setLayout(new BorderLayout(0,0));
         container.add(panel, BorderLayout.CENTER);
         container.add(getUsersPanel(), BorderLayout.WEST);
 
@@ -159,8 +161,9 @@ public class ClientGUI extends JFrame implements ActionListener {
         list.setFont(segeoFont);
         JScrollPane listScrollPane = new JScrollPane(list);
 
-        clientPanel.add(listScrollPane, BorderLayout.CENTER);
-        userPanel.add(clientPanel, BorderLayout.CENTER);
+        //clientPanel.add(listScrollPane, BorderLayout.CENTER);
+        //userPanel.add(clientPanel, BorderLayout.CENTER);
+        userPanel.add(listScrollPane, BorderLayout.CENTER);
     }
 
 
@@ -168,6 +171,37 @@ public class ClientGUI extends JFrame implements ActionListener {
         msgBtn = new JButton("Send ");
         msgBtn.addActionListener(this);
         msgBtn.setEnabled(true);
+        
+//        msgBtn.addKeyListener(new KeyListener() {
+//        	@Override
+//        	public void keyPressed(KeyEvent e) {
+//        		int keyCode = e.getKeyCode();
+//        		if(keyCode == 10) {
+//        			try {
+//        				System.out.println("Hello world");
+//        				String message = textField.getText();
+//                        textField.setText("");
+//                        sendMsg(message);
+//                        System.out.println("Send Msg: " + message);
+//					} catch (RemoteException e1) {
+//						// TODO Auto-generated catch block
+//						e1.printStackTrace();
+//					}
+//        		}
+//        	}
+//
+//			@Override
+//			public void keyReleased(KeyEvent e) {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//
+//			@Override
+//			public void keyTyped(KeyEvent e) {
+//				// TODO Auto-generated method stub
+//				
+//			}
+//        });
 
         fileBtn = new JButton("Send File");
         fileBtn.addActionListener(this);
