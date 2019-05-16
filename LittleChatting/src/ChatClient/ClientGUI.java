@@ -12,7 +12,7 @@ import java.io.*;
 import java.rmi.RemoteException;
 
 
-public class ClientGUI extends JFrame implements ActionListener {
+public class ClientGUI extends JFrame implements ActionListener, KeyListener {
     private static final long serialVersionUID = 1L;
     private JTextField textField;
     private String name = "";//, message;
@@ -124,6 +124,9 @@ public class ClientGUI extends JFrame implements ActionListener {
         textField = new JTextField();
         textField.setFont(segeoFont);
         inputPanel.add(textField);
+        
+        textField.addKeyListener(this);
+        
         return inputPanel;
     }
 
@@ -170,37 +173,6 @@ public class ClientGUI extends JFrame implements ActionListener {
         msgBtn = new JButton("Send ");
         msgBtn.addActionListener(this);
         msgBtn.setEnabled(true);
-        
-//        msgBtn.addKeyListener(new KeyListener() {
-//        	@Override
-//        	public void keyPressed(KeyEvent e) {
-//        		int keyCode = e.getKeyCode();
-//        		if(keyCode == 10) {
-//        			try {
-//        				System.out.println("Hello world");
-//        				String message = textField.getText();
-//                        textField.setText("");
-//                        sendMsg(message);
-//                        System.out.println("Send Msg: " + message);
-//					} catch (RemoteException e1) {
-//						// TODO Auto-generated catch block
-//						e1.printStackTrace();
-//					}
-//        		}
-//        	}
-//
-//			@Override
-//			public void keyReleased(KeyEvent e) {
-//				// TODO Auto-generated method stub
-//				
-//			}
-//
-//			@Override
-//			public void keyTyped(KeyEvent e) {
-//				// TODO Auto-generated method stub
-//				
-//			}
-//        });
 
         fileBtn = new JButton("Send File");
         fileBtn.addActionListener(this);
@@ -214,8 +186,7 @@ public class ClientGUI extends JFrame implements ActionListener {
 
         return buttonPanel;
     }
-
-
+    
     @Override
     public void actionPerformed(ActionEvent e) {
         try {
@@ -304,6 +275,35 @@ public class ClientGUI extends JFrame implements ActionListener {
             throw e;
         }
     }
+
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		int keyCode = e.getKeyCode();
+		
+		if(keyCode == KeyEvent.VK_ENTER) {
+	        try {
+	            String message = textField.getText();
+	            textField.setText("");
+				sendMsg(message);
+				System.out.println("Send Msg: " + message);
+			} catch (RemoteException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+		}
+	}
+	
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+	}
 }
 
 
