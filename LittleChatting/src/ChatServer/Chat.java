@@ -6,21 +6,17 @@ class Chat {
     private String name;
     private ClientInterface client;
 
-
-    //constructor
-    Chat(String name, ClientInterface client){
+    // Chat client's constructor
+    Chat(String name, ClientInterface client) {
         this.name = name;
         this.client = client;
     }
 
-
-    //getters and setters
-    String getName(){
+    String getName() {
         return name;
     }
 
-
-    ClientInterface getClient(){
+    ClientInterface getClient() {
         return client;
     }
 }

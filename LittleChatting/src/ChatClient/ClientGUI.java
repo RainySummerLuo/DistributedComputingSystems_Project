@@ -1,29 +1,12 @@
 package ChatClient;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.Insets;
+import javax.swing.*;
+import javax.swing.UIManager.LookAndFeelInfo;
+import javax.swing.border.Border;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
-
-import javax.swing.BorderFactory;
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.UIManager;
-import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.border.Border;
 
 
 public class ClientGUI extends JFrame implements ActionListener {
@@ -58,18 +41,21 @@ public class ClientGUI extends JFrame implements ActionListener {
     }
 
 
+    // Constructor of ClientGUI
     private ClientGUI() {
         frame = new JFrame("Client Chat Console");
+        frame.setResizable(false);
+        // Forbidden window resize (maximize)
 
         frame.addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
+            // Close the window
             public void windowClosing(java.awt.event.WindowEvent windowEvent) {
-
                 if (chatClient != null) {
                     try {
-                        sendMessage("Bye all, I am leaving");
-                        chatClient.serverIF.leaveChat(name);
+                        chatClient.serverIF.clientLeave(name);
                     } catch (RemoteException e) {
+                        JOptionPane.showMessageDialog(frame, "An error encountered: \n" + e.getMessage());
                         e.printStackTrace();
                     }
                 }
@@ -77,17 +63,17 @@ public class ClientGUI extends JFrame implements ActionListener {
             }
         });
 
-        Container c = getContentPane();
-        JPanel outerPanel = new JPanel(new BorderLayout());
+        Container container = getContentPane();
+        JPanel panel = new JPanel(new BorderLayout());
 
-        outerPanel.add(getInputPanel(), BorderLayout.CENTER);
-        outerPanel.add(getTextPanel(), BorderLayout.NORTH);
+        panel.add(getInputPanel(), BorderLayout.CENTER);
+        panel.add(getTextPanel(), BorderLayout.NORTH);
 
-        c.setLayout(new BorderLayout());
-        c.add(outerPanel, BorderLayout.CENTER);
-        c.add(getUsersPanel(), BorderLayout.WEST);
+        container.setLayout(new BorderLayout());
+        container.add(panel, BorderLayout.CENTER);
+        container.add(getUsersPanel(), BorderLayout.WEST);
 
-        frame.add(c);
+        frame.add(container);
         frame.pack();
         frame.setAlwaysOnTop(true);
         frame.setLocation(150, 150);
@@ -127,7 +113,6 @@ public class ClientGUI extends JFrame implements ActionListener {
 
 
     private JPanel getUsersPanel() {
-
         userPanel = new JPanel(new BorderLayout());
         String userStr = " Current Users      ";
 
@@ -194,13 +179,12 @@ public class ClientGUI extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         try {
-            //get connected to chat service
             if (e.getSource() == startButton) {
-                name = textField.getText();
+                name = JOptionPane.showInputDialog(frame, "Pleas enter your name:" );
                 if (name.length() != 0) {
-                    frame.setTitle(name + "'s console ");
+                    frame.setTitle("LittleChatting - " + name);
                     textField.setText("");
-                    textArea.append("username : " + name + " connecting to chat...\n");
+                    // textArea.append("username : " + name + " connecting to chat...\n");
                     getConnected(name);
                     if (!chatClient.connectionProblem) {
                         startButton.setEnabled(false);
@@ -211,7 +195,6 @@ public class ClientGUI extends JFrame implements ActionListener {
                 }
             }
 
-            //get text and clear textField
             if (e.getSource() == sendButton) {
                 message = textField.getText();
                 textField.setText("");
@@ -219,7 +202,6 @@ public class ClientGUI extends JFrame implements ActionListener {
                 System.out.println("Sending message : " + message);
             }
 
-            //send a private message, to selected users
             if (e.getSource() == privateMsgButton) {
                 int[] privateList = list.getSelectedIndices();
 
@@ -238,14 +220,14 @@ public class ClientGUI extends JFrame implements ActionListener {
     }
 
 
-    private void sendMessage(String chatMessage) throws RemoteException {
-        chatClient.serverIF.updateChat(name, chatMessage);
+    private void sendMessage(String chatMessage) throws RemoteException{
+        chatClient.serverIF.msgToAll(name, chatMessage);
     }
 
 
-    private void sendPrivate(int[] privateList) throws RemoteException {
+    private void sendPrivate(int[] privateList) throws RemoteException{
         String privateMessage = "[PM from " + name + "] :" + message + "\n";
-        chatClient.serverIF.sendPM(privateList, privateMessage);
+        chatClient.serverIF.msgToOne(privateList, privateMessage);
     }
 
 

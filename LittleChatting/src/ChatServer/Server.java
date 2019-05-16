@@ -10,28 +10,22 @@ import java.rmi.server.RemoteRef;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Date;
 import java.util.Vector;
-/*
- import java.util.Vector;
- import ChatClient.ClientInterface;
-*/
 
 
 public class Server extends UnicastRemoteObject implements ServerInterface {
-    private String line = "---------------------------------------------\n";
-    private Vector<Chat> chatters;
+    private Vector<Chat> chatClient;
     private static final long serialVersionUID = 1L;
 
 
     private Server() throws RemoteException {
         super();
-        chatters = new Vector<>(10, 1);
+        chatClient = new Vector<>(10, 1);
     }
-
 
     public static void main(String[] args) {
         startRMIRegistry();
         String hostName = "localhost";
-        String serviceName = "GroupChatService";
+        String serviceName = "ChatService";
 
         if (args.length == 2) {
             hostName = args[0];
@@ -39,53 +33,52 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
         }
 
         try {
-            ServerInterface hello = new Server();
-            Naming.rebind("rmi://" + hostName + "/" + serviceName, hello);
-            System.out.println("Group Chat RMI Server is running...");
+            ServerInterface chatServer = new Server();
+            Naming.rebind("rmi://" + hostName + "/" + serviceName, chatServer);
+            System.out.println("[100%] Chatting Server is running...");
         } catch (Exception e) {
-            System.out.println("Server had problems starting");
+            System.out.println("[Error] Chatting Server had problems starting.");
         }
     }
-
 
     private static void startRMIRegistry() {
         try {
             java.rmi.registry.LocateRegistry.createRegistry(1099);
-            System.out.println("RMI Server ready");
+            System.out.println("[50%] RMI Server is ready.");
         } catch (RemoteException e) {
+            System.out.println("[Error] RMI Server has problems starting.");
             e.printStackTrace();
         }
     }
 
 
-    /*
-    public String sayHello(String ClientName) throws RemoteException {
-        System.out.println(ClientName + " sent a message");
-        return "Hello " + ClientName + " from group chat server";
-    }
-    */
-
-
-    @Override
-    public void updateChat(String name, String nextPost) {
-        String message = name + " : " + nextPost + "\n";
-        sendToAll(message);
-    }
-
-
-    @Override
-    public void passIdentity(RemoteRef ref) {
-        //System.out.println("\n" + ref.remoteToString() + "\n");
+    private void registerChatter(String[] details) {
         try {
-            System.out.println(line + ref.toString());
+            ClientInterface nextClient = (ClientInterface) Naming.lookup("rmi://" + details[1] + "/" + details[2]);
+            chatClient.addElement(new Chat(details[0], nextClient));
+            nextClient.getMsg("[Server] : Hello " + details[0] + " you are now free to chat.\n");
+            msgToAll(details[0] + " has joined the group.\n");
+            setClientlist();
+        } catch (RemoteException | MalformedURLException | NotBoundException e) {
+            System.out.println("[Error] Error encountered in bounding client.");
+            e.printStackTrace();
+        }
+    }
+
+    /* ----- Serverside ----- */
+    @Override
+    public void getClientInfo(RemoteRef ref) {
+        try {
+            System.out.println(ref.toString());
         } catch (Exception e) {
+            System.out.println("[Error] Error encountered in func:passIdentity()");
             e.printStackTrace();
         }
     }
 
 
     @Override
-    public void registerListener(String[] details) {
+    public void registerClient(String[] details) {
         System.out.println(new Date(System.currentTimeMillis()));
         System.out.println(details[0] + " has joined the chat session");
         System.out.println(details[0] + "'s hostname : " + details[1]);
@@ -94,50 +87,16 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
     }
 
 
-    private void registerChatter(String[] details) {
-        try {
-            ClientInterface nextClient = (ClientInterface) Naming.lookup("rmi://" + details[1] + "/" + details[2]);
-
-            chatters.addElement(new Chat(details[0], nextClient));
-
-            nextClient.messageFromServer("[Server] : Hello " + details[0] + " you are now free to chat.\n");
-
-            sendToAll("[Server] : " + details[0] + " has joined the group.\n");
-
-            updateUserList();
-        } catch (RemoteException | MalformedURLException | NotBoundException e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    private void updateUserList() {
-        String[] currentUsers = getUserList();
-        for (Chat c : chatters) {
-            try {
-                c.getClient().updateUserList(currentUsers);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-
-    private String[] getUserList() {
-        // generate an array of current users
-        String[] allUsers = new String[chatters.size()];
+    private void setClientlist() {
+        String[] allUsers = new String[chatClient.size()];
         for (int i = 0; i < allUsers.length; i++) {
-            allUsers[i] = chatters.elementAt(i).getName();
+            allUsers[i] = chatClient.elementAt(i).getName();
         }
-        return allUsers;
-    }
-
-
-    private void sendToAll(String newMessage) {
-        for (Chat c : chatters) {
+        for (Chat c : chatClient) {
             try {
-                c.getClient().messageFromServer(newMessage);
+                c.getClient().setClientlist(allUsers);
             } catch (RemoteException e) {
+                System.out.println("[Error] Error encountered in setClientUserList().");
                 e.printStackTrace();
             }
         }
@@ -145,27 +104,46 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 
 
     @Override
-    public void leaveChat(String userName) {
-        for (Chat c : chatters) {
+    public void msgToAll(String name, String nextPost) {
+        String message = name + " : " + nextPost + "\n";
+        for (Chat c : chatClient) {
+            try {
+                c.getClient().getMsg(message);
+            } catch (RemoteException e) {
+                System.out.println("[Error] Error encountered in sendToAll().");
+                e.printStackTrace();
+            }
+        }
+    }
+
+    void msgToAll(String msg) {
+        msgToAll("Server", msg);
+    }
+
+
+    @Override
+    public void msgToOne(int[] privateGroup, String privateMessage) throws RemoteException {
+        Chat pc;
+        for (int i : privateGroup) {
+            pc = chatClient.elementAt(i);
+            pc.getClient().getMsg(privateMessage);
+        }
+    }
+
+
+    @Override
+    public void clientLeave(String userName) {
+        for (Chat c : chatClient) {
             if (c.getName().equals(userName)) {
-                System.out.println(line + userName + " left the chat session");
+                System.out.println(userName + " left the chat session");
                 System.out.println(new Date(System.currentTimeMillis()));
-                chatters.remove(c);
+                msgToAll(userName + " left the chat session");
+                chatClient.remove(c);
                 break;
             }
         }
-        if (!chatters.isEmpty()) {
-            updateUserList();
-        }
-    }
-
-
-    @Override
-    public void sendPM(int[] privateGroup, String privateMessage) throws RemoteException {
-        Chat pc;
-        for (int i : privateGroup) {
-            pc = chatters.elementAt(i);
-            pc.getClient().messageFromServer(privateMessage);
+        if (!chatClient.isEmpty()) {
+            setClientlist();
         }
     }
 }

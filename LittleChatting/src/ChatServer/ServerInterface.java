@@ -6,15 +6,13 @@ import java.rmi.server.RemoteRef;
 
 
 public interface ServerInterface extends Remote {
-    void updateChat(String userName, String chatMessage) throws RemoteException;
+    void getClientInfo(RemoteRef ref) throws Exception;
 
-    void passIdentity(RemoteRef ref) throws Exception;
+    void registerClient(String[] details) throws RemoteException;
 
-    void registerListener(String[] details) throws RemoteException;
+    void msgToAll(String userName, String chatMessage) throws RemoteException;
 
-    void leaveChat(String userName) throws RemoteException;
+    void msgToOne(int[] privateGroup, String privateMessage) throws RemoteException;
 
-    void sendPM(int[] privateGroup, String privateMessage) throws RemoteException;
+    void clientLeave(String userName) throws RemoteException;
 }
-
-

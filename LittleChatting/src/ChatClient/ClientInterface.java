@@ -5,7 +5,7 @@ import java.rmi.RemoteException;
 
 
 public interface ClientInterface extends Remote {
-    void messageFromServer(String message) throws RemoteException;
+    void getMsg(String message) throws RemoteException;
 
-    void updateUserList(String[] currentUsers) throws RemoteException;
+    void setClientlist(String[] currentUsers) throws RemoteException;
 }

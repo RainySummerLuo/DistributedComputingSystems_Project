@@ -13,7 +13,7 @@ public class ClientGUI_2 extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         stage.initStyle(StageStyle.TRANSPARENT);
-        Parent root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("GUI.fxml"));
 
         Scene scene = new Scene(root, Color.TRANSPARENT);
 
