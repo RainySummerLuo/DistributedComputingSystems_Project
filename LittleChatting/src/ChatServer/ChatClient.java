@@ -2,12 +2,12 @@ package ChatServer;
 
 import ChatClient.ClientInterface;
 
-class Chat {
+class ChatClient {
     private String name;
     private ClientInterface client;
 
     // Chat client's constructor
-    Chat(String name, ClientInterface client) {
+    ChatClient(String name, ClientInterface client) {
         this.name = name;
         this.client = client;
     }

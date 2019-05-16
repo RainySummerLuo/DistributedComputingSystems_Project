@@ -3,12 +3,18 @@ package ChatClient;
 import ChatServer.ServerInterface;
 
 import javax.swing.*;
+import java.awt.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.rmi.ConnectException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Objects;
 
 
 public class Client extends UnicastRemoteObject implements ClientInterface {
@@ -17,7 +23,7 @@ public class Client extends UnicastRemoteObject implements ClientInterface {
     private String clientServiceName;
     private String name;
     ServerInterface serverIF;
-    boolean connectionProblem = false;
+    private boolean connectionProblem = false;
 
 
     Client(ClientGUI aChatGUI, String userName) throws RemoteException {
@@ -64,11 +70,22 @@ public class Client extends UnicastRemoteObject implements ClientInterface {
 
     @Override
     public void getMsg(String message) {
-        System.out.println(message);
         chatGUI.textArea.append(message);
         //make the gui display the last appended text, ie scroll to bottom
         chatGUI.textArea.setCaretPosition(chatGUI.textArea.getDocument().getLength());
     }
+
+
+    @Override
+    public void getFile(String clientName, byte[] fileBytes, String fileName) {
+        chatGUI.textArea.append(clientName + ": " + "I have sent you a file.");
+        try {
+            Desktop.getDesktop().open(new File(Objects.requireNonNull(byteTofile(fileBytes, fileName))));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     @Override
     public void setClientlist(String[] currentUsers) {
@@ -79,5 +96,21 @@ public class Client extends UnicastRemoteObject implements ClientInterface {
         chatGUI.setClientPanel(currentUsers);
         chatGUI.clientPanel.repaint();
         chatGUI.clientPanel.revalidate();
+    }
+
+
+    private String byteTofile(byte[] fileBytes, String fileName) {
+        try {
+            String filePath = "\\FileReciv\\" + fileName;
+            FileOutputStream fos = new FileOutputStream(filePath);
+            fos.write(fileBytes);
+            fos.close();
+            return filePath;
+        } catch (FileNotFoundException e) {
+            JOptionPane.showMessageDialog(null, "File Not Found:\n" + e.getMessage());
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "IOException:\n" + e.getMessage());
+        }
+        return null;
     }
 }

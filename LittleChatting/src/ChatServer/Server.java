@@ -13,7 +13,7 @@ import java.util.Vector;
 
 
 public class Server extends UnicastRemoteObject implements ServerInterface {
-    private Vector<Chat> chatClient;
+    private Vector<ChatClient> chatClient;
     private static final long serialVersionUID = 1L;
 
 
@@ -55,7 +55,7 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
     private void registerChatter(String[] details) {
         try {
             ClientInterface nextClient = (ClientInterface) Naming.lookup("rmi://" + details[1] + "/" + details[2]);
-            chatClient.addElement(new Chat(details[0], nextClient));
+            chatClient.addElement(new ChatClient(details[0], nextClient));
             nextClient.getMsg("[Server] : Hello " + details[0] + " you are now free to chat.\n");
             msgToAll(details[0] + " has joined the group.\n");
             setClientlist();
@@ -92,7 +92,7 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
         for (int i = 0; i < allUsers.length; i++) {
             allUsers[i] = chatClient.elementAt(i).getName();
         }
-        for (Chat c : chatClient) {
+        for (ChatClient c : chatClient) {
             try {
                 c.getClient().setClientlist(allUsers);
             } catch (RemoteException e) {
@@ -104,11 +104,11 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 
 
     @Override
-    public void msgToAll(String name, String nextPost) {
-        String message = name + " : " + nextPost + "\n";
-        for (Chat c : chatClient) {
+    public void msgToAll(String clientName, String msg) {
+        String msgLine = clientName + " : " + msg + "\n";
+        for (ChatClient c : chatClient) {
             try {
-                c.getClient().getMsg(message);
+                c.getClient().getMsg(msgLine);
             } catch (RemoteException e) {
                 System.out.println("[Error] Error encountered in sendToAll().");
                 e.printStackTrace();
@@ -116,24 +116,43 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
         }
     }
 
-    void msgToAll(String msg) {
+
+    // Override method for server messages
+    private void msgToAll(String msg) {
         msgToAll("Server", msg);
     }
 
 
     @Override
-    public void msgToOne(int[] privateGroup, String privateMessage) throws RemoteException {
-        Chat pc;
+    public void msgToOne(int[] privateGroup, String msg) throws RemoteException {
+        ChatClient pc;
         for (int i : privateGroup) {
             pc = chatClient.elementAt(i);
-            pc.getClient().getMsg(privateMessage);
+            pc.getClient().getMsg(msg);
         }
+    }
+
+    @Override
+    public void fileToAll(String clientName, byte[] fileBytes, String filePath) throws RemoteException {
+        for (ChatClient c : chatClient) {
+            try {
+                c.getClient().getFile(clientName, fileBytes, filePath);
+            } catch (RemoteException e) {
+                System.out.println("[Error] Error encountered in sendToAll().");
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void fileToOne(int[] privateGroup, byte[] privateMessage, String fileName) throws RemoteException {
+
     }
 
 
     @Override
     public void clientLeave(String userName) {
-        for (Chat c : chatClient) {
+        for (ChatClient c : chatClient) {
             if (c.getName().equals(userName)) {
                 System.out.println(userName + " left the chat session");
                 System.out.println(new Date(System.currentTimeMillis()));

@@ -10,9 +10,13 @@ public interface ServerInterface extends Remote {
 
     void registerClient(String[] details) throws RemoteException;
 
-    void msgToAll(String userName, String chatMessage) throws RemoteException;
+    void msgToAll(String clientName, String msg) throws RemoteException;
 
-    void msgToOne(int[] privateGroup, String privateMessage) throws RemoteException;
+    void msgToOne(int[] clientGroup, String msg) throws RemoteException;
+
+    void fileToAll(String clientName, byte[] fileBytes, String fileName) throws RemoteException;
+
+    void fileToOne(int[] clientGroup, byte[] fileBytes, String filePath) throws RemoteException;
 
     void clientLeave(String userName) throws RemoteException;
 }

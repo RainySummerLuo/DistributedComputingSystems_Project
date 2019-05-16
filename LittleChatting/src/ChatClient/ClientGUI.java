@@ -6,14 +6,15 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.*;
 import java.rmi.RemoteException;
 
 
 public class ClientGUI extends JFrame implements ActionListener {
     private static final long serialVersionUID = 1L;
     private JTextField textField;
-    private String name, message;
-    private Font meiryoFont = new Font("Meiryo", Font.PLAIN, 14);
+    private String name = "", message;
+    private Font segeoFont = new Font("Segeo UI", Font.PLAIN, 14);
     private Border blankBorder = BorderFactory.createEmptyBorder(10, 10, 20, 10);//top,r,b,l
     private Client chatClient;
     private JList<String> list;
@@ -21,8 +22,8 @@ public class ClientGUI extends JFrame implements ActionListener {
     JTextArea textArea; // , userArea;
     JFrame frame;
     JButton privateMsgButton;
-    private JButton startButton;
-    private JButton sendButton;
+    private JButton fileBtn;
+    private JButton msgBtn;
     JPanel clientPanel, userPanel;
 
 
@@ -80,6 +81,21 @@ public class ClientGUI extends JFrame implements ActionListener {
         textField.requestFocus();
 
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
+
+        name = JOptionPane.showInputDialog(frame, "Pleas enter your name:");
+        if (name.isEmpty()) {
+            System.exit(0);
+        }
+        frame.setTitle(name + "'s console ");
+        frame.setTitle("LittleChatting - " + name);
+        textField.setText("");
+        textArea.append("username : " + name + " connecting to chat...\n");
+        // textArea.append("username : " + name + " connecting to chat...\n");
+        try {
+            getConnected(name);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
         frame.setVisible(true);
     }
 
@@ -88,7 +104,7 @@ public class ClientGUI extends JFrame implements ActionListener {
         String welcome = "Welcome enter your name and press Start to begin\n";
         textArea = new JTextArea(welcome, 14, 34);
         textArea.setMargin(new Insets(10, 10, 10, 10));
-        textArea.setFont(meiryoFont);
+        textArea.setFont(segeoFont);
 
         textArea.setLineWrap(true);
         textArea.setWrapStyleWord(true);
@@ -106,7 +122,7 @@ public class ClientGUI extends JFrame implements ActionListener {
         JPanel inputPanel = new JPanel(new GridLayout(1, 1, 5, 5));
         inputPanel.setBorder(blankBorder);
         textField = new JTextField();
-        textField.setFont(meiryoFont);
+        textField.setFont(segeoFont);
         inputPanel.add(textField);
         return inputPanel;
     }
@@ -123,8 +139,8 @@ public class ClientGUI extends JFrame implements ActionListener {
         String[] noClientsYet = {"No other users"};
         setClientPanel(noClientsYet);
 
-        clientPanel.setFont(meiryoFont);
-        userPanel.add(makeButtonPanel(), BorderLayout.SOUTH);
+        clientPanel.setFont(segeoFont);
+        userPanel.add(setButtonPanel(), BorderLayout.SOUTH);
         userPanel.setBorder(blankBorder);
 
         return userPanel;
@@ -138,15 +154,15 @@ public class ClientGUI extends JFrame implements ActionListener {
         for (String s : currClients) {
             listModel.addElement(s);
         }
-        if (currClients.length > 1) {
+        /*if (currClients.length > 1) {
             privateMsgButton.setEnabled(true);
-        }
+        }*/
 
         //Create the list and put it in a scroll pane.
         list = new JList<>(listModel);
         list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         list.setVisibleRowCount(8);
-        list.setFont(meiryoFont);
+        list.setFont(segeoFont);
         JScrollPane listScrollPane = new JScrollPane(list);
 
         clientPanel.add(listScrollPane, BorderLayout.CENTER);
@@ -154,23 +170,20 @@ public class ClientGUI extends JFrame implements ActionListener {
     }
 
 
-    private JPanel makeButtonPanel() {
-        sendButton = new JButton("Send ");
-        sendButton.addActionListener(this);
-        sendButton.setEnabled(false);
+    private JPanel setButtonPanel() {
+        msgBtn = new JButton("Send ");
+        msgBtn.addActionListener(this);
+        msgBtn.setEnabled(true);
 
-        privateMsgButton = new JButton("Send PM");
-        privateMsgButton.addActionListener(this);
-        privateMsgButton.setEnabled(false);
-
-        startButton = new JButton("Start ");
-        startButton.addActionListener(this);
+        fileBtn = new JButton("Send File");
+        fileBtn.addActionListener(this);
+        fileBtn.setEnabled(true);
 
         JPanel buttonPanel = new JPanel(new GridLayout(4, 1));
-        buttonPanel.add(privateMsgButton);
+        //buttonPanel.add(privateMsgButton);
         buttonPanel.add(new JLabel(""));
-        buttonPanel.add(startButton);
-        buttonPanel.add(sendButton);
+        buttonPanel.add(msgBtn);
+        buttonPanel.add(fileBtn);
 
         return buttonPanel;
     }
@@ -179,27 +192,19 @@ public class ClientGUI extends JFrame implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         try {
-            if (e.getSource() == startButton) {
-                name = JOptionPane.showInputDialog(frame, "Pleas enter your name:" );
-                if (name.length() != 0) {
-                    frame.setTitle("LittleChatting - " + name);
-                    textField.setText("");
-                    // textArea.append("username : " + name + " connecting to chat...\n");
-                    getConnected(name);
-                    if (!chatClient.connectionProblem) {
-                        startButton.setEnabled(false);
-                        sendButton.setEnabled(true);
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(frame, "Enter your name to Start");
-                }
-            }
-
-            if (e.getSource() == sendButton) {
+            if (e.getSource() == msgBtn) {
                 message = textField.getText();
                 textField.setText("");
-                sendMessage(message);
-                System.out.println("Sending message : " + message);
+                sendMsg(message);
+                System.out.println("Send Msg: " + message);
+            }
+
+            if (e.getSource() == fileBtn) {
+                JFileChooser jf = new JFileChooser();
+                jf.showOpenDialog(this);
+                File file = jf.getSelectedFile();
+                System.out.println("Send File: " + file.getName());
+                sendFile(fileTobyte(file), file.getName());
             }
 
             if (e.getSource() == privateMsgButton) {
@@ -216,16 +221,44 @@ public class ClientGUI extends JFrame implements ActionListener {
         } catch (RemoteException remoteExc) {
             remoteExc.printStackTrace();
         }
+    }
 
+    private byte[] fileTobyte(File file) {
+        try {
+            if (file.length() > Integer.MAX_VALUE) {
+                JOptionPane.showMessageDialog(null, "The file is too large.");
+                return null;
+            }
+            FileInputStream fis = new FileInputStream(file);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
+            byte[] temp = new byte[1024];
+            int size;
+            while ((size = fis.read(temp)) != -1) {
+                baos.write(temp, 0, size);
+            }
+            fis.close();
+            byte[] fileBytes;
+            fileBytes = baos.toByteArray();
+            return fileBytes;
+        } catch (FileNotFoundException e) {
+            JOptionPane.showMessageDialog(null, "File Not Found:\n" + e.getMessage());
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "IOException:\n" + e.getMessage());
+        }
+        return null;
     }
 
 
-    private void sendMessage(String chatMessage) throws RemoteException{
+    private void sendMsg(String chatMessage) throws RemoteException {
         chatClient.serverIF.msgToAll(name, chatMessage);
     }
 
+    private void sendFile(byte[] fileBytes, String fileName) throws RemoteException {
+        chatClient.serverIF.fileToAll(name, fileBytes, fileName);
+    }
 
-    private void sendPrivate(int[] privateList) throws RemoteException{
+
+    private void sendPrivate(int[] privateList) throws RemoteException {
         String privateMessage = "[PM from " + name + "] :" + message + "\n";
         chatClient.serverIF.msgToOne(privateList, privateMessage);
     }
