@@ -66,14 +66,23 @@ public class ClientGUI extends JFrame implements ActionListener, KeyListener {
         });
 
         Container container = getContentPane();
-        JPanel panel = new JPanel(new BorderLayout());
+        JPanel upPanel = new JPanel(new BorderLayout());
+        JPanel downPanel = new JPanel(new BorderLayout());
+        
+        upPanel.add(getTextPanel(),BorderLayout.CENTER);
+        upPanel.add(getUsersPanel(),BorderLayout.WEST);
+        
+        downPanel.add(getInputPanel(),BorderLayout.CENTER);
+        downPanel.add(getButtonPanel(),BorderLayout.EAST);
+        
+        container.add(upPanel,BorderLayout.CENTER);
+        container.add(downPanel,BorderLayout.SOUTH);
+//        panel.add(getInputPanel(), BorderLayout.CENTER);
+//        panel.add(getTextPanel(), BorderLayout.NORTH);
 
-        panel.add(getInputPanel(), BorderLayout.CENTER);
-        panel.add(getTextPanel(), BorderLayout.NORTH);
-
-        container.setLayout(new BorderLayout(0,0));
-        container.add(panel, BorderLayout.CENTER);
-        container.add(getUsersPanel(), BorderLayout.WEST);
+//        container.setLayout(new BorderLayout(0,0));
+//        container.add(panel, BorderLayout.CENTER);
+//        container.add(getUsersPanel(), BorderLayout.WEST);
 
         frame.add(container);
         frame.pack();
@@ -105,25 +114,25 @@ public class ClientGUI extends JFrame implements ActionListener, KeyListener {
         String welcome = "Welcome enter your name and press Start to begin\n";
         textPane = new JTextPane();
         textPane.setText(welcome);
-        textPane.setMargin(new Insets(0, 0, 0, 0));
+        //textPane.setMargin(new Insets(0, 0, 0, 0));
         textPane.setFont(segeoFont);
         //textPane.setLineWrap(true);
         //textPane.setWrapStyleWord(true);
         textPane.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(textPane);
-        JPanel textPanel = new JPanel();
-        textPanel.add(scrollPane);
+        JPanel textPanel = new JPanel(new BorderLayout());
+        textPanel.add(scrollPane,BorderLayout.CENTER);
         textPanel.setFont(segeoFont);
         return textPanel;
     }
 
 
     private JPanel getInputPanel() {
-        JPanel inputPanel = new JPanel(new GridLayout(1, 1, 5, 5));
+        JPanel inputPanel = new JPanel(new BorderLayout());
         inputPanel.setBorder(blankBorder);
         textField = new JTextField();
         textField.setFont(segeoFont);
-        inputPanel.add(textField);
+        inputPanel.add(textField,BorderLayout.CENTER);
         
         textField.addKeyListener(this);
         
@@ -133,12 +142,13 @@ public class ClientGUI extends JFrame implements ActionListener, KeyListener {
 
     private JPanel getUsersPanel() {
         userPanel = new JPanel(new BorderLayout());
-
+        userPanel.setPreferredSize(new Dimension(150, 300));
+        
         String[] noClientsYet = {"Broadcast"};
         setClientPanel(noClientsYet);
 
         clientPanel.setFont(segeoFont);
-        userPanel.add(setButtonPanel(), BorderLayout.SOUTH);
+        //userPanel.add(setButtonPanel(), BorderLayout.SOUTH);
         userPanel.setBorder(blankBorder);
 
         return userPanel;
@@ -165,11 +175,11 @@ public class ClientGUI extends JFrame implements ActionListener, KeyListener {
 
         //clientPanel.add(listScrollPane, BorderLayout.CENTER);
         //userPanel.add(clientPanel, BorderLayout.CENTER);
-        userPanel.add(listScrollPane, BorderLayout.CENTER);
+        userPanel.add(listScrollPane);
     }
 
 
-    private JPanel setButtonPanel() {
+    private JPanel getButtonPanel() {
         msgBtn = new JButton("Send ");
         msgBtn.addActionListener(this);
         msgBtn.setEnabled(true);
