@@ -103,7 +103,7 @@ public class ClientGUI extends JFrame implements ActionListener {
         String welcome = "Welcome enter your name and press Start to begin\n";
         textPane = new JTextPane();
         textPane.setText(welcome);
-        textPane.setMargin(new Insets(10, 10, 10, 10));
+        textPane.setMargin(new Insets(0, 0, 0, 0));
         textPane.setFont(segeoFont);
         //textPane.setLineWrap(true);
         //textPane.setWrapStyleWord(true);
@@ -111,8 +111,7 @@ public class ClientGUI extends JFrame implements ActionListener {
         JScrollPane scrollPane = new JScrollPane(textPane);
         JPanel textPanel = new JPanel();
         textPanel.add(scrollPane);
-
-        textPanel.setFont(new Font("Meiryo", Font.PLAIN, 14));
+        textPanel.setFont(segeoFont);
         return textPanel;
     }
 
