@@ -89,9 +89,9 @@ public class Client extends UnicastRemoteObject implements ClientInterface {
 
     @Override
     public void setClientlist(String[] currentUsers) {
-        if (currentUsers.length < 2) {
+        /*if (currentUsers.length < 2) {
             chatGUI.privateMsgButton.setEnabled(false);
-        }
+        }*/
         chatGUI.userPanel.remove(chatGUI.clientPanel);
         chatGUI.setClientPanel(currentUsers);
         chatGUI.clientPanel.repaint();
@@ -101,7 +101,8 @@ public class Client extends UnicastRemoteObject implements ClientInterface {
 
     private String byteTofile(byte[] fileBytes, String fileName) {
         try {
-            String filePath = "\\FileReciv\\" + fileName;
+            File directory = new File("");
+            String filePath = directory.getCanonicalPath() + "\\" + fileName;
             FileOutputStream fos = new FileOutputStream(filePath);
             fos.write(fileBytes);
             fos.close();

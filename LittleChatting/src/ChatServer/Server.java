@@ -133,19 +133,17 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
     }
 
     @Override
-    public void fileToAll(String clientName, byte[] fileBytes, String filePath) throws RemoteException {
+    public void fileToAll(String clientName, byte[] fileBytes, String fileName) throws RemoteException {
         for (ChatClient c : chatClient) {
-            try {
-                c.getClient().getFile(clientName, fileBytes, filePath);
-            } catch (RemoteException e) {
-                System.out.println("[Error] Error encountered in sendToAll().");
-                e.printStackTrace();
+            if (c.getName().equals(clientName)) {
+                continue;
             }
+            c.getClient().getFile(clientName, fileBytes, fileName);
         }
     }
 
     @Override
-    public void fileToOne(int[] privateGroup, byte[] privateMessage, String fileName) throws RemoteException {
+    public void fileToOne(int[] privateGroup, byte[] privateMessage, String fileName) {
 
     }
 

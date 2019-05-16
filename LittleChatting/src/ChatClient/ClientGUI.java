@@ -201,10 +201,10 @@ public class ClientGUI extends JFrame implements ActionListener {
 
             if (e.getSource() == fileBtn) {
                 JFileChooser jf = new JFileChooser();
-                jf.showOpenDialog(this);
+                jf.showOpenDialog(frame);
                 File file = jf.getSelectedFile();
                 System.out.println("Send File: " + file.getName());
-                sendFile(fileTobyte(file), file.getName());
+                sendFile(fileTobyte(file.getAbsolutePath()), file.getName());
             }
 
             if (e.getSource() == privateMsgButton) {
@@ -217,16 +217,17 @@ public class ClientGUI extends JFrame implements ActionListener {
                 textField.setText("");
                 sendPrivate(privateList);
             }
-
         } catch (RemoteException remoteExc) {
             remoteExc.printStackTrace();
         }
     }
 
-    private byte[] fileTobyte(File file) {
+    private byte[] fileTobyte(String filePath) {
         try {
+            System.out.println(filePath + "\n");
+            File file = new File(filePath);
             if (file.length() > Integer.MAX_VALUE) {
-                JOptionPane.showMessageDialog(null, "The file is too large.");
+                JOptionPane.showMessageDialog(frame, "The file is too large.");
                 return null;
             }
             FileInputStream fis = new FileInputStream(file);
@@ -241,9 +242,9 @@ public class ClientGUI extends JFrame implements ActionListener {
             fileBytes = baos.toByteArray();
             return fileBytes;
         } catch (FileNotFoundException e) {
-            JOptionPane.showMessageDialog(null, "File Not Found:\n" + e.getMessage());
+            JOptionPane.showMessageDialog(frame, "File Not Found:\n" + e.getMessage());
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "IOException:\n" + e.getMessage());
+            JOptionPane.showMessageDialog(frame, "IOException:\n" + e.getMessage());
         }
         return null;
     }
