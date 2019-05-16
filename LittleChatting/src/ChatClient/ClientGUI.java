@@ -25,14 +25,16 @@ public class ClientGUI extends JFrame implements ActionListener, KeyListener {
     //JButton privateMsgButton;
     private JButton fileBtn;
     private JButton msgBtn;
-    JPanel clientPanel, userPanel;
+    private boolean isBroadcast;
+    private JList<String> list;
+    JPanel userPanel;
 
 
     public static void main(String[] args) {
         //set the look and feel to 'Nimbus'
         try {
             for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
+                if (info.getName().equals("Nimbus")) {
                     UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
@@ -58,7 +60,7 @@ public class ClientGUI extends JFrame implements ActionListener, KeyListener {
                         chatClient.serverIF.clientLeave(name);
                     } catch (RemoteException e) {
                         JOptionPane.showMessageDialog(frame, "An error encountered: \n" + e.getMessage());
-                        e.printStackTrace();
+                        System.exit(0);
                     }
                 }
                 System.exit(0);
@@ -68,23 +70,24 @@ public class ClientGUI extends JFrame implements ActionListener, KeyListener {
         Container container = getContentPane();
         JPanel upPanel = new JPanel(new BorderLayout());
         JPanel downPanel = new JPanel(new BorderLayout());
-        
-        upPanel.add(getTextPanel(),BorderLayout.CENTER);
-        upPanel.add(getUsersPanel(),BorderLayout.WEST);
-        
-        downPanel.add(getInputPanel(),BorderLayout.CENTER);
-        downPanel.add(getButtonPanel(),BorderLayout.EAST);
-        
-        container.add(upPanel,BorderLayout.CENTER);
-        container.add(downPanel,BorderLayout.SOUTH);
-//        panel.add(getInputPanel(), BorderLayout.CENTER);
-//        panel.add(getTextPanel(), BorderLayout.NORTH);
 
-//        container.setLayout(new BorderLayout(0,0));
-//        container.add(panel, BorderLayout.CENTER);
-//        container.add(getUsersPanel(), BorderLayout.WEST);
+        upPanel.add(getUsersPanel(), BorderLayout.WEST);
+        upPanel.add(getTextPanel(), BorderLayout.EAST);
+
+        downPanel.add(getInputPanel(), BorderLayout.CENTER);
+        downPanel.add(getButtonPanel(), BorderLayout.EAST);
+
+        Dimension newDim = new Dimension(450, 200);
+        upPanel.setMinimumSize(newDim);
+        upPanel.setPreferredSize(newDim);
+        upPanel.setMaximumSize(newDim);
+        upPanel.setSize(newDim);
+
+        container.add(upPanel, BorderLayout.NORTH);
+        container.add(downPanel, BorderLayout.SOUTH);
 
         frame.add(container);
+        frame.setBackground(Color.white);
         frame.pack();
         frame.setAlwaysOnTop(true);
         frame.setLocation(150, 150);
@@ -105,6 +108,7 @@ public class ClientGUI extends JFrame implements ActionListener, KeyListener {
             getConnected(name);
         } catch (RemoteException e) {
             e.printStackTrace();
+            System.exit(0);
         }
         frame.setVisible(true);
     }
@@ -121,7 +125,7 @@ public class ClientGUI extends JFrame implements ActionListener, KeyListener {
         textPane.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(textPane);
         JPanel textPanel = new JPanel(new BorderLayout());
-        textPanel.add(scrollPane,BorderLayout.CENTER);
+        textPanel.add(scrollPane, BorderLayout.CENTER);
         textPanel.setFont(segeoFont);
         return textPanel;
     }
@@ -132,54 +136,62 @@ public class ClientGUI extends JFrame implements ActionListener, KeyListener {
         inputPanel.setBorder(blankBorder);
         textField = new JTextField();
         textField.setFont(segeoFont);
-        inputPanel.add(textField,BorderLayout.CENTER);
-        
+        inputPanel.add(textField, BorderLayout.CENTER);
+
         textField.addKeyListener(this);
-        
+
         return inputPanel;
     }
 
 
     private JPanel getUsersPanel() {
         userPanel = new JPanel(new BorderLayout());
-        userPanel.setPreferredSize(new Dimension(150, 300));
-        
-        String[] noClientsYet = {"Broadcast"};
-        setClientPanel(noClientsYet);
+        userPanel.setSize(new Dimension(150, 300));
 
-        clientPanel.setFont(segeoFont);
-        //userPanel.add(setButtonPanel(), BorderLayout.SOUTH);
-        userPanel.setBorder(blankBorder);
+        String[] clientsList = {"Broadcast"};
+        setUserPanel(clientsList);
+
+        Dimension newDim = new Dimension(100, 100);
+        userPanel.setMinimumSize(newDim);
+        userPanel.setPreferredSize(newDim);
+        userPanel.setMaximumSize(newDim);
+        userPanel.setSize(newDim);
 
         return userPanel;
     }
 
 
-    void setClientPanel(String[] currClients) {
-        clientPanel = new JPanel(new BorderLayout());
+    void setUserPanel(String[] currClients) {
         DefaultListModel<String> listModel = new DefaultListModel<>();
 
         for (String s : currClients) {
+            if (name.equals(s)) {
+                continue;
+            }
             listModel.addElement(s);
         }
-        /*if (currClients.length > 1) {
-            privateMsgButton.setEnabled(true);
-        }*/
-
-        //Create the list and put it in a scroll pane.
-        JList<String> list = new JList<>(listModel);
-        list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        list = new JList<>(listModel);
+        list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         list.setVisibleRowCount(8);
         list.setFont(segeoFont);
-        JScrollPane listScrollPane = new JScrollPane(list);
-
-        //clientPanel.add(listScrollPane, BorderLayout.CENTER);
-        //userPanel.add(clientPanel, BorderLayout.CENTER);
-        userPanel.add(listScrollPane);
+        if (list.getModel().getSize() > 0) {
+            list.setSelectedIndex(0);
+        }
+        //JScrollPane listPane = new JScrollPane(list);
+        userPanel.add(list, BorderLayout.CENTER);
+        userPanel.setBorder(blankBorder);
     }
 
 
     private JPanel getButtonPanel() {
+        JToggleButton bcBtn = new JToggleButton("Broadcast");
+        bcBtn.addActionListener(this);
+        bcBtn.setEnabled(true);
+        bcBtn.addActionListener(ev -> {
+            isBroadcast = !isBroadcast;
+            //JOptionPane.showMessageDialog(frame, isBroadcast);
+        });
+
         msgBtn = new JButton("Send ");
         msgBtn.addActionListener(this);
         msgBtn.setEnabled(true);
@@ -188,15 +200,16 @@ public class ClientGUI extends JFrame implements ActionListener, KeyListener {
         fileBtn.addActionListener(this);
         fileBtn.setEnabled(true);
 
-        JPanel buttonPanel = new JPanel(new GridLayout(4, 1));
-        //buttonPanel.add(privateMsgButton);
-        buttonPanel.add(new JLabel(""));
+        JPanel buttonPanel = new JPanel(new GridLayout(3, 1));
+
+        buttonPanel.add(bcBtn);
         buttonPanel.add(msgBtn);
         buttonPanel.add(fileBtn);
 
         return buttonPanel;
     }
-    
+
+
     @Override
     public void actionPerformed(ActionEvent e) {
         try {
@@ -214,21 +227,11 @@ public class ClientGUI extends JFrame implements ActionListener, KeyListener {
                 System.out.println("Send File: " + file.getName());
                 sendFile(fileTobyte(file.getAbsolutePath()), file.getName());
             }
-
-            /*if (e.getSource() == privateMsgButton) {
-                int[] privateList = list.getSelectedIndices();
-
-                for (int value : privateList) {
-                    System.out.println("selected index :" + value);
-                }
-                message = textField.getText();
-                textField.setText("");
-                sendPrivate(privateList);
-            }*/
         } catch (RemoteException remoteExc) {
             remoteExc.printStackTrace();
         }
     }
+
 
     private byte[] fileTobyte(String filePath) {
         try {
@@ -259,26 +262,30 @@ public class ClientGUI extends JFrame implements ActionListener, KeyListener {
 
 
     private void sendMsg(String chatMessage) throws RemoteException {
-        chatClient.serverIF.msgToAll(name, chatMessage);
+        if (isBroadcast) {
+            chatClient.serverIF.msgToAll(name, chatMessage);
+        } else {
+            String clientName = list.getSelectedValue();
+            chatClient.serverIF.msgToOne(name, clientName, chatMessage);
+        }
     }
+
 
     private void sendFile(byte[] fileBytes, String fileName) throws RemoteException {
-        chatClient.serverIF.fileToAll(name, fileBytes, fileName);
+        if (isBroadcast) {
+            chatClient.serverIF.fileToAll(name, fileBytes, fileName);
+        } else {
+            String clientName = list.getSelectedValue();
+            chatClient.serverIF.fileToOne(name, clientName, fileBytes, fileName);
+        }
     }
 
-    /*
-    private void sendPrivate(int[] privateList) throws RemoteException {
-        String privateMessage = "[PM from " + name + "] :" + message + "\n";
-        chatClient.serverIF.msgToOne(privateList, privateMessage);
-    }
-    */
 
     private void getConnected(String userName) throws RemoteException {
         //remove whitespace and non word characters to avoid malformed url
-        String cleanedUserName;
-        cleanedUserName = userName.replaceAll("\\W+", "_");
+        String cleanUserName = userName.replaceAll("\\W+", "_");
         try {
-            chatClient = new Client(this, cleanedUserName);
+            chatClient = new Client(this, cleanUserName);
             chatClient.startClient();
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -287,33 +294,33 @@ public class ClientGUI extends JFrame implements ActionListener, KeyListener {
     }
 
 
-	@Override
-	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void keyReleased(KeyEvent e) {
+        // TODO Auto-generated method stub
 
-	@Override
-	public void keyPressed(KeyEvent e) {
-		int keyCode = e.getKeyCode();
-		
-		if(keyCode == KeyEvent.VK_ENTER) {
-	        try {
-	            String message = textField.getText();
-	            textField.setText("");
-				sendMsg(message);
-				System.out.println("Send Msg: " + message);
-			} catch (RemoteException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		}
-	}
-	
-	@Override
-	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-	}
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        int keyCode = e.getKeyCode();
+
+        if (keyCode == KeyEvent.VK_ENTER) {
+            try {
+                String message = textField.getText();
+                textField.setText("");
+                sendMsg(message);
+                System.out.println("Send Msg: " + message);
+            } catch (RemoteException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+        // TODO Auto-generated method stub
+    }
 }
 
 

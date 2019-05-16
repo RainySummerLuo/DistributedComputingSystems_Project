@@ -105,7 +105,7 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 
     @Override
     public void msgToAll(String clientName, String msg) {
-        String msgLine = clientName + " : " + msg + "\n";
+        String msgLine = clientName + ": " + msg + "\n";
         for (ChatClient c : chatClient) {
             try {
                 c.getClient().getMsg(msgLine);
@@ -124,11 +124,12 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 
 
     @Override
-    public void msgToOne(int[] privateGroup, String msg) throws RemoteException {
-        ChatClient pc;
-        for (int i : privateGroup) {
-            pc = chatClient.elementAt(i);
-            pc.getClient().getMsg(msg);
+    public void msgToOne(String clientName, String destName, String msg) throws RemoteException {
+        String msgLine = clientName + ": " + msg;
+        for (ChatClient c : chatClient) {
+            if (c.getName().equals(destName)) {
+                c.getClient().getMsg(msgLine);
+            }
         }
     }
 
@@ -143,8 +144,16 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
     }
 
     @Override
-    public void fileToOne(int[] privateGroup, byte[] privateMessage, String fileName) {
-
+    public void fileToOne(String clientName, String destName, byte[] fileBytes, String fileName) {
+        for (ChatClient c : chatClient) {
+            if (c.getName().equals(destName)) {
+                try {
+                    c.getClient().getFile(clientName, fileBytes, fileName);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
 

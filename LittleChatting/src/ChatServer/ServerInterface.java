@@ -12,11 +12,11 @@ public interface ServerInterface extends Remote {
 
     void msgToAll(String clientName, String msg) throws RemoteException;
 
-    void msgToOne(int[] clientGroup, String msg) throws RemoteException;
+    void msgToOne(String clientName, String destName, String msg) throws RemoteException;
 
     void fileToAll(String clientName, byte[] fileBytes, String fileName) throws RemoteException;
 
-    void fileToOne(int[] clientGroup, byte[] fileBytes, String filePath) throws RemoteException;
+    void fileToOne(String clientName, String destName, byte[] fileBytes, String fileName) throws RemoteException;
 
     void clientLeave(String userName) throws RemoteException;
 }

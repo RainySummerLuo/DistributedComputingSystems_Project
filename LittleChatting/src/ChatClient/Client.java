@@ -23,7 +23,6 @@ public class Client extends UnicastRemoteObject implements ClientInterface {
     private String clientServiceName;
     private String name;
     ServerInterface serverIF;
-    private boolean connectionProblem = false;
 
 
     Client(ClientGUI aChatGUI, String userName) throws RemoteException {
@@ -43,17 +42,14 @@ public class Client extends UnicastRemoteObject implements ClientInterface {
             serverIF = (ServerInterface) Naming.lookup("rmi://" + hostName + "/" + serviceName);
         } catch (ConnectException e) {
             JOptionPane.showMessageDialog(
-                    chatGUI.frame, "The server seems to be unavailable\nPlease try later",
+                    chatGUI.frame, "The server is unavailable.\nPlease try later.",
                     "Connection problem", JOptionPane.ERROR_MESSAGE);
-            connectionProblem = true;
-            e.printStackTrace();
+            System.exit(0);
         } catch (NotBoundException | MalformedURLException me) {
-            connectionProblem = true;
             me.printStackTrace();
+            System.exit(0);
         }
-        if (!connectionProblem) {
-            regClient(details);
-        }
+        regClient(details);
         System.out.println("Client Listen RMI Server is running...\n");
     }
 
@@ -79,7 +75,7 @@ public class Client extends UnicastRemoteObject implements ClientInterface {
     @Override
     public void getFile(String clientName, byte[] fileBytes, String fileName) {
         chatGUI.textPane.setText(chatGUI.textPane.getText() + "\n" + clientName + ": " + "I have sent you a file.\n");
-        //chatGUI.textPane.append("<html><A href='" + byteTofile(fileBytes, fileName) + "'>" + fileName + "</A></html>");
+        //chatGUI.textPane.setText(chatGUI.textPane.getText() + "<html><A href='" + byteTofile(fileBytes, fileName) + "'>" + fileName + "</A></html>");
         try {
             Desktop.getDesktop().open(new File(Objects.requireNonNull(byteTofile(fileBytes, fileName))));
         } catch (IOException e) {
@@ -89,14 +85,14 @@ public class Client extends UnicastRemoteObject implements ClientInterface {
 
 
     @Override
-    public void setClientlist(String[] currentUsers) {
+    public void setClientlist(String[] currentClients) {
         /*if (currentUsers.length < 2) {
             chatGUI.privateMsgButton.setEnabled(false);
         }*/
-        chatGUI.userPanel.remove(chatGUI.clientPanel);
-        chatGUI.setClientPanel(currentUsers);
-        chatGUI.clientPanel.repaint();
-        chatGUI.clientPanel.revalidate();
+        chatGUI.userPanel.removeAll();
+        chatGUI.setUserPanel(currentClients);
+        //chatGUI.userPanel.repaint();
+        chatGUI.userPanel.revalidate();
     }
 
 
