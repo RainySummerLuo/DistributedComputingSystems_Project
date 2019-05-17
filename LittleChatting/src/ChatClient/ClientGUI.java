@@ -25,7 +25,7 @@ public class ClientGUI extends JFrame implements ActionListener, KeyListener {
     //JButton privateMsgButton;
     private JButton fileBtn;
     private JButton msgBtn;
-    private boolean isBroadcast;
+    private boolean isBroadcast = false;
     private JList<String> list;
     JPanel userPanel;
 
@@ -267,6 +267,7 @@ public class ClientGUI extends JFrame implements ActionListener, KeyListener {
         } else {
             String clientName = list.getSelectedValue();
             chatClient.serverIF.msgToOne(name, clientName, chatMessage);
+            textPane.setText(textPane.getText() + "\n" + name + ": " + chatMessage);
         }
     }
 
